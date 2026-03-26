@@ -3,9 +3,10 @@ package com.mediclarify.api.repository;
 import com.mediclarify.api.entity.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.UUID; // Add this import!
+import java.util.UUID;
 
-// Changed String to UUID here:
+// String to UUID:
+
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, UUID> {
 }
