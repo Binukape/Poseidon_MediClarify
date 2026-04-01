@@ -3,19 +3,17 @@ package com.mediclarify.api.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.util.UUID; // Add this import!
+import java.util.UUID;
 
 @Entity
 @Table(name = "patients")
 public class Patient {
     @Id
-    private UUID patientId; // Changed to UUID
+    private UUID patientId;
 
     private String name;
     private String email;
 
-    // --- NEW: Personal Medical Data (Matches 'Update Personal Information' Use
-    // Case) ---
     private Double weightKg;
     private Double heightCm;
     private String bloodType;
