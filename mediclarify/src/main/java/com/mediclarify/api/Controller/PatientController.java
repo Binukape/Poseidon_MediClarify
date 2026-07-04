@@ -29,6 +29,13 @@ public class PatientController {
         }
     }
 
+    @GetMapping("/{patientId}")
+    public ResponseEntity<Patient> getPatient(@PathVariable UUID patientId) {
+        return patientRepository.findById(patientId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PutMapping("/{patientId}/vitals")
     public ResponseEntity<Patient> updateVitals(
             @PathVariable UUID patientId,

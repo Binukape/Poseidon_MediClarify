@@ -10,13 +10,12 @@ public class MedicalRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    
+
     private UUID patientId;
     private String fileName;
     private String filePath;
     private LocalDateTime uploadedAt = LocalDateTime.now();
 
-    // Getters and Setters
     public UUID getId() {
         return id;
     }
@@ -55,5 +54,22 @@ public class MedicalRecord {
 
     public void setUploadedAt(LocalDateTime uploadedAt) {
         this.uploadedAt = uploadedAt;
+    }
+
+    @Transient
+    public String getFileType() {
+        if (fileName == null) {
+            return "";
+        }
+
+        String lowerName = fileName.toLowerCase();
+        if (lowerName.endsWith(".pdf")) {
+            return "application/pdf";
+        }
+        if (lowerName.endsWith(".png") || lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg")
+                || lowerName.endsWith(".gif") || lowerName.endsWith(".webp")) {
+            return "image/" + lowerName.substring(lowerName.lastIndexOf('.') + 1);
+        }
+        return "application/octet-stream";
     }
 }

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MediClarify logo">
+  <rect width="64" height="64" rx="16" fill="#0f766e"/>
+  <path d="M20 28.5C20 22.7 24.7 18 30.5 18h3C39.3 18 44 22.7 44 28.5v1.2c0 3.9-2.3 7.4-5.8 9.2l-4.2 2.4-4.2-2.4C22.3 37.1 20 33.6 20 29.7z" fill="#ffffff"/>
+  <path d="M29 25h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#14b8a6"/>
+</svg>

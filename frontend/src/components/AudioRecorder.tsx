@@ -40,7 +40,7 @@ export function AudioRecorder({ patientId: _patientId, onUpload, compact = false
           setState("idle");
         }
       };
-      mr.start();
+      mr.start(100); // Collect audio data every 100ms
       mediaRef.current = mr;
       setState("recording");
       setSeconds(0);

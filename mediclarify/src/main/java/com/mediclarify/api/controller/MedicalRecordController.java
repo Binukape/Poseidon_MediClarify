@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/documents") // This must match the path in the error!
-@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping({ "/api/documents", "/api/medical-records" })
+@CrossOrigin(origins = "http://localhost:8081")
 public class MedicalRecordController {
 
     @Autowired
@@ -27,25 +27,23 @@ public class MedicalRecordController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("patientId") UUID patientId) {
         try {
-            if (file.isEmpty()) return ResponseEntity.badRequest().body("File is empty.");
+            if (file.isEmpty())
+                return ResponseEntity.badRequest().body("File is empty.");
 
-            // UML Requirement: Validate format (PDF/JPG)
             String contentType = file.getContentType();
             if (contentType == null || (!contentType.equals("application/pdf") && !contentType.startsWith("image/"))) {
                 return ResponseEntity.badRequest().body("Invalid format. Only PDF and Images allowed.");
             }
 
-            // Store securely in Supabase (reuse your existing storage service)
-            String filePath = supabaseStorageService.uploadAudioFile(file, patientId.toString());
+            String storedPath = supabaseStorageService.uploadDocumentFile(file, patientId.toString());
 
-            // Save record to database
             MedicalRecord record = new MedicalRecord();
             record.setPatientId(patientId);
             record.setFileName(file.getOriginalFilename());
-            record.setFilePath(filePath);
+            record.setFilePath(supabaseStorageService.getPublicUrl("medical-documents", storedPath));
             medicalRecordRepository.save(record);
 
-            return ResponseEntity.ok("Document stored securely: " + filePath);
+            return ResponseEntity.ok("Document stored securely: " + record.getFilePath());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error uploading document.");
@@ -53,10 +51,15 @@ public class MedicalRecordController {
     }
 
     @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<String>> getPatientDocuments(@PathVariable UUID patientId) {
+    public ResponseEntity<List<MedicalRecord>> getPatientDocuments(@PathVariable UUID patientId) {
         try {
-            List<String> documents = supabaseStorageService.listPatientDocuments(patientId.toString());
-            return ResponseEntity.ok(documents);
+            List<MedicalRecord> records = medicalRecordRepository.findByPatientId(patientId);
+            for (MedicalRecord record : records) {
+                if (record.getFilePath() != null && !record.getFilePath().startsWith("http")) {
+                    record.setFilePath(supabaseStorageService.getPublicUrl("medical-documents", record.getFilePath()));
+                }
+            }
+            return ResponseEntity.ok(records);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
